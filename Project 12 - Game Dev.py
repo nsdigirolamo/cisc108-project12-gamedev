@@ -1,6 +1,6 @@
 """
 Project 12 - Game Development
-A clone of the famous "Asteroid Game."
+A clone of the famous "Asteroids" arcade game.
 
 Date: Spring 2020
 Course: CISC108
@@ -9,15 +9,14 @@ Author: Nicholas DiGirolamo
 """
 
 from designer import *
-from math import sin
-from math import cos
-from math import radians
-from random import randint
-from random import random
+from math import sin, cos, radians
+from random import randint, random
 
 SPACESHIP_ACCELERATION = 1
 SPACESHIP_TURN_SPEED = 15
+
 ASTEROID_SPEED_LIMITER = 0.01
+ASTEROID_SPAWN_RATE = 25
 
 Asteroid = {
     'asteroid': DesignerObject,
@@ -55,7 +54,7 @@ def create_spaceship() -> DesignerObject:
     Returns:
         DesignerObject: The newly created spaceship.
     """
-    spaceship = image('spaceship.png', get_width()/2, get_height()/2)
+    spaceship = image('spaceship.png', get_width() / 2, get_height() / 2)
     spaceship['scale'] = 0.075
     return spaceship
 
@@ -155,18 +154,16 @@ def spawn_asteroid(world: World):
     Args:
         world (World): The game world.
     """
-    if randint(0, 25) == 0:
+    if randint(0, ASTEROID_SPAWN_RATE) == 0:
         # Looks for points in an area 50 pixels larger than the game screen in every direction.
         x_position = randint(-50, get_width() + 50)
         y_position = randint(-50, get_height() + 50)
         
-        # Checks for if the points are outside the game scree.
+        # Checks if the points are outside the game screen.
         x_is_outside = x_position < 0 or x_position > get_width()
         y_is_outside = y_position < 0 or y_position > get_height()
     
-        # If a point is found that is outside the game screen, continue.
         if x_is_outside or y_is_outside:
-            
             # Set the asteroid's speeds so it moves towards the middle of the screen.
             # Randomizes the speeds so they don't congregate in the dead center.
             x_speed = random() * (get_width()/2 - x_position)
@@ -186,7 +183,7 @@ def move_asteroids(world: World):
     Args:
         world (World): The game world.
     """
-    # asteroid['asteroid']['x'] is confusing syntax. The Asteroid (dictionary) contains a DesignerObject called "asteroid"
+    # asteroid['asteroid']['x'] is confusing syntax. Asteroid (the dictionary) contains a DesignerObject called "asteroid"
     # and that DesignerObject has its own x and y components. I might need to change up the key names in my Asteroid
     # dictionary to make this a bit more clear about what exactly is going on. Alternatively, I could just change the
     # name of the Asteroid dictionary in this for loop!
