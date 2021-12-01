@@ -37,10 +37,10 @@ World = {
 
 def create_world() -> World:
     """
-    Creates the game world.
+    Creates a game world.
 
     Returns:
-        World: A newly created game world.
+        World: The newly created game world.
     """
     set_window_color('black')
 
@@ -52,7 +52,7 @@ def create_world() -> World:
 
 def create_spaceship() -> Spaceship:
     """
-    Creates the spaceship using appropriate adjustments.
+    Creates a spaceship.
 
     Returns:
         Spaceship: The newly created spaceship.
@@ -207,7 +207,7 @@ def wrap_spaceship_position(world: World):
 
 def create_asteroid(x_position: int, y_position: int, x_speed: int, y_speed: int) -> Asteroid:
     """
-    Creates a new asteroid dictionary.
+    Creates a new asteroid.
 
     Args:
         x_position (int): The intial x position of the asteroid.
@@ -229,8 +229,7 @@ def create_asteroid(x_position: int, y_position: int, x_speed: int, y_speed: int
 
 def spawn_asteroid(world: World):
     """
-    Randomly spawns a new asteroid. Most aspects of the asteroid will be
-    randomly determined.
+    Randomly determines when to create a new asteroid.
 
     Args:
         world (World): The game world.
@@ -261,8 +260,7 @@ def spawn_asteroid(world: World):
 
 def move_asteroids(world: World):
     """
-    Moves all asteroids in the world. Since the asteroids are their own
-    dictionary, they each have a uniqe speed that influences their position.
+    Controls movement for all asteroids in the given world.
 
     Args:
         world (World): The game world.
