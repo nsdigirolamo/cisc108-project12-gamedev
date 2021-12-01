@@ -292,7 +292,8 @@ def spaceship_asteroid_collide(world: World) -> bool:
 
 when(
     'starting',
-    create_world)
+    create_world
+    )
 
 when(
     'typing',
@@ -310,7 +311,8 @@ when(
     'updating',
     move_spaceship,
     wrap_spaceship_position,
-    spawn_asteroid, move_asteroids,
+    spawn_asteroid,
+    move_asteroids,
     handle_spaceship_acceleration,
     handle_spaceship_turning
     )
