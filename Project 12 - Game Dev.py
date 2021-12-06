@@ -14,6 +14,8 @@ SPACESHIP_TURN_SPEED = 10
 ASTEROID_SPEED_LIMITER = 0.01
 ASTEROID_SPAWN_RATE = 25
 
+STAR_SPAWN_RATE = 100
+
 Spaceship = {
     'sprite': DesignerObject,
     'x_speed': int,
@@ -29,9 +31,17 @@ Asteroid = {
     'y_speed': int,
     }
 
+Star = {
+    'sprite': DesignerObject
+    }
+
 World = {
     'spaceship': Spaceship,
-    'asteroids': [Asteroid]
+    'asteroids': [Asteroid],
+    'stars': [Star],
+    'score': int,
+    'score_text': DesignerObject,
+    'game_over_text': DesignerObject
     }
 
 
@@ -47,6 +57,10 @@ def create_world() -> World:
     return {
         'spaceship': create_spaceship(),
         'asteroids': [],
+        'stars': [],
+        'score': 0,
+        'score_text': create_score_text(),
+        'game_over_text': create_game_over_text()
         }
 
 
@@ -287,7 +301,95 @@ def spaceship_asteroid_collide(world: World) -> bool:
         # collides with the center of the spaceship. This allows the players
         # to get a bit closer to asteroids without losing the game.
         if colliding(asteroid['sprite'], spaceship_x, spaceship_y):
+            show_game_over_text(world)
             return True
+
+
+def create_star(x_position: int, y_position: int) -> Star:
+    """
+    Creates a new star.
+
+    Args:
+        x_position (int): The x position of the star.
+        y_position (int): The y position of the star.
+    Returns:
+        Star: The newly created star.
+    """
+    sprite = image('star.png', x_position, y_position)
+    sprite['scale'] = 0.1
+
+    return {
+        'sprite': sprite,
+        }
+
+
+def spawn_star(world: World):
+    """
+    Randomly determines when to create a new star.
+
+    Args:
+        world (World): The game world.
+    """
+    if randint(0, STAR_SPAWN_RATE) == 0:
+        x_position = randint(0, get_width())
+        y_position = randint(0, get_height())
+
+        world['stars'].append(create_star(x_position, y_position))
+
+
+def handle_spaceship_star_collide(world: World):
+    """
+    Updates the score when a star collides with the spaceship.
+
+    Args:
+        world (World): The game world.
+    """
+    spaceship = world['spaceship']
+    new_stars = []
+    
+    for star in world['stars']:
+        if colliding(spaceship['sprite'], star['sprite']):
+            world['score'] += 1
+            world['score_text']['text'] = "Score: " + str(world['score'])
+        else:
+            new_stars.append(star)
+            
+    world['stars'] = new_stars
+            
+
+
+def create_score_text() -> DesignerObject:
+    """
+    Creates the score text.
+    
+    Returns:
+        DesignerObject: The newly created text.
+    """
+    score = text('yellow', "Score: 0", 24, get_width() / 2, 50)
+    return score
+    
+    
+def create_game_over_text() -> DesignerObject:
+    """
+    Creates the "GAME OVER!" text.
+    
+    Returns:
+        DesignerObject: The newly created text.
+    """
+    game_over_text = text('red', 'GAME OVER!', 48, get_width() / 2, get_height() / 2)
+    game_over_text['visible'] = False
+    return game_over_text
+
+        
+def show_game_over_text(world: World):
+    """
+    Makes the "GAME OVER!" text visible.
+    
+    Args:
+        world (World): The game world.
+    """
+    world['game_over_text']['visible'] = True
+    
 
 
 when(
@@ -313,6 +415,8 @@ when(
     wrap_spaceship_position,
     spawn_asteroid,
     move_asteroids,
+    spawn_star,
+    handle_spaceship_star_collide,
     handle_spaceship_acceleration,
     handle_spaceship_turning
     )
